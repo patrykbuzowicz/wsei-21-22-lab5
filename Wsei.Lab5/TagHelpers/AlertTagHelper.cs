@@ -13,8 +13,14 @@ namespace Wsei.Lab5.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
+            var colorClass = string.IsNullOrEmpty(Color)
+                // default value
+                ? "alert-info"
+                // color passed via parameter
+                : $"alert-{Color}";
+
             output.TagName = "div";
-            output.Attributes.Add("class", "alert alert-info");
+            output.Attributes.Add("class", $"alert {colorClass}");
         }
     }
 }
