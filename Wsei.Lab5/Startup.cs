@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wsei.Lab5.Database;
+using Wsei.Lab5.Middleware;
+using Wsei.Lab5.Services;
 
 namespace Wsei.Lab5
 {
@@ -25,11 +27,16 @@ namespace Wsei.Lab5
             services.AddDbContext<AppDbContext>(config =>
                 config.UseSqlServer(Configuration.GetConnectionString("Application"))
             );
+
+            services.AddScoped<IProductService, ProductService>();
+            services.AddSingleton<IMetricsCollector, MetricsCollector>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<CollectMetricsMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
