@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +27,10 @@ namespace Wsei.Lab5
 
             services.AddDbContext<AppDbContext>(config =>
                 config.UseSqlServer(Configuration.GetConnectionString("Application"))
+            //config.UseInMemoryDatabase()
             );
+
+            services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<AppDbContext>();
 
             services.AddScoped<IProductService, ProductService>();
             services.AddSingleton<IMetricsCollector, MetricsCollector>();
@@ -50,6 +54,7 @@ namespace Wsei.Lab5
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -57,6 +62,8 @@ namespace Wsei.Lab5
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapRazorPages();
             });
         }
     }
